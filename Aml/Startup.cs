@@ -1,7 +1,9 @@
-namespace Aml
+﻿namespace Aml
 {
+    using Aml.Data;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -24,6 +26,9 @@ namespace Aml
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Aml", Version = "v1" });
             });
+
+            services.AddDbContext<AmlContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("AmlContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
