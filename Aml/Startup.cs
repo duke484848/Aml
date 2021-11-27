@@ -1,6 +1,8 @@
 ﻿namespace Aml
 {
     using Aml.Data;
+    using Aml.Models.Api;
+    using Aml.Models.Api.ScheduleController;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
@@ -8,6 +10,8 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class Startup
     {
@@ -26,6 +30,10 @@
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Aml", Version = "v1" });
             });
+
+            var schedulingConfiguration = new SchedulingConfiguration();
+            Configuration.GetSection("SchedulingConfiguration").Bind(schedulingConfiguration);
+            services.AddSingleton<ISchedulingConfiguration>(schedulingConfiguration);
 
             services.AddDbContext<AmlContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("AmlContext")));
