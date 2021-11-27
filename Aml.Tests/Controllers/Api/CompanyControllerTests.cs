@@ -7,6 +7,7 @@
     using Aml.Services;
     using Microsoft.AspNetCore.Mvc;
     using Moq;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Net;
@@ -29,12 +30,7 @@
             };
 
             var company = request.ToCompany();
-
-            var contextMock = new Mock<AmlContext>();
-            contextMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(company);
-            var schedulingService = new Mock<ISchedulingService>();
-            schedulingService.Setup(x => x.GenerateNotificationSchedule(It.IsAny<Company>())).Returns(
-                new List<Notification>
+            company.Notifications = new List<Notification>
                     {
                         new Notification{
                             Date =  DateTime.Now.AddDays(1)
@@ -45,37 +41,74 @@
                        new Notification{
                             Date =  DateTime.Now.AddDays(10)
                         }
-                    }
-                );
+                    };
+            var contextMock = new Mock<AmlContext>();
+            contextMock.Setup(x => x.Company.Find(It.IsAny<Guid>())).Returns(company);
+
+            var sut = new Controller(contextMock.Object, null);
+
+            //Act
+            var actual = await sut.CreateOrGetCompany(request);
+
+            //Assert
+            var response = Assert.IsType<OkObjectResult>(actual);
+            var expectedStatusCode = (int)HttpStatusCode.OK;
+            var actualStatusCode = response.StatusCode;
+            Assert.Equal(expectedStatusCode, actualStatusCode);
+            var expectedJSON = JsonConvert.SerializeObject(company.ToCreateCompanyResponseDto());
+            var actualJSON = JsonConvert.SerializeObject(response.Value);
+            Assert.Equal(expectedJSON, actualJSON);
+        }
+
+        [Fact]
+        public async Task When_the_company_doesnt_exist_It_returns_201_status_code()
+        {
+            //Arrange
+            var request = new CreateCompanyRequestDto()
+            {
+                Id = Guid.NewGuid(),
+                CompanyNumber = "1234567890",
+                CompanyType = CompanyType.Large,
+                Market = Market.Denmark,
+                Name = "Abc",
+            };
 
 
+            var contextMock = new Mock<AmlContext>();
+            contextMock.Setup(x => x.Company.Find(It.IsAny<Guid>())).Returns<Company>(null);
 
+            var schedulingService = new Mock<ISchedulingService>();
+            var expectedNotifications = new List<Notification>
+                    {
+                        new Notification{
+                            Date =  DateTime.Now.AddDays(1)
+                        },
+                        new Notification{
+                            Date =  DateTime.Now.AddDays(5)
+                        },
+                       new Notification{
+                            Date =  DateTime.Now.AddDays(10)
+                        }
+                    };
+            schedulingService.Setup(x => x.GenerateNotificationSchedule(It.IsAny<Company>()))
+                .Returns(expectedNotifications);
+            var expectedCompany = request.ToCompany();
+            expectedCompany.Notifications = expectedNotifications;
 
             var sut = new Controller(contextMock.Object, schedulingService.Object);
 
             //Act
-            var actual = sut.CreateOrGetCompany(request);
+            var actual = await sut.CreateOrGetCompany(request);
+
 
             //Assert
-            var result = Assert.IsType<OkObjectResult>(actual);
-            var expectedStatusCode = (int)HttpStatusCode.OK;
-            var actualStatusCode = result.StatusCode;
+            var response = Assert.IsType<ObjectResult>(actual);
+            var expectedStatusCode = (int)HttpStatusCode.Created;
+            var actualStatusCode = response.StatusCode;
             Assert.Equal(expectedStatusCode, actualStatusCode);
-            var actualValue = result.Value;
-            var expectedValue = company.ToCreateCompanyResponseDto().Notifications;
-            Assert.Equal(expectedValue, actualValue);
-            //var expected = company.Notifications.Select(x => x.Date.ToShortDateString()).ToList();
-            //Assert.Equal(expected, actual.Notifications);
-        }
-
-        [Fact]
-        public void When_the_company_doesnt_exist_It_returns_201_status_code()
-        {
-            //Arrange
-
-            //Act
-
-            //Assert
+            var expectedJSON = JsonConvert.SerializeObject(expectedCompany.ToCreateCompanyResponseDto());
+            var actualJSON = JsonConvert.SerializeObject(response.Value);
+            Assert.Equal(expectedJSON, actualJSON);
         }
 
     }

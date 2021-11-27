@@ -15,8 +15,8 @@
         {
         }
 
-        public DbSet<Company> Company { get; set; }
+        public virtual DbSet<Company> Company { get; set; }
 
-        public DbSet<Notification> Notification { get; set; }
+        public virtual DbSet<Notification> Notification { get; set; }
     }
 }
