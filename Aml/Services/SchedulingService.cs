@@ -1,11 +1,10 @@
-﻿using Aml.Models.Api.CompanyController;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Aml.Services
+﻿namespace Aml.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Aml.Models.Api.CompanyController;
+
     public class SchedulingService : ISchedulingService
     {
 
