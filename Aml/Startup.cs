@@ -1,5 +1,6 @@
 ﻿namespace Aml
 {
+    using System.Text.Json.Serialization;
     using Aml.Data;
     using Aml.Models.Api.CompanyController;
     using Microsoft.AspNetCore.Builder;
@@ -9,7 +10,6 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
-    using System.Text.Json.Serialization;
 
     public class Startup
     {

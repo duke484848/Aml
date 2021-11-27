@@ -25,11 +25,24 @@
             _schedulingConfiguration = schedulingConfiguration;
         }
 
+        /// <summary>
+        /// Creates or return company with its schedule
+        /// </summary>
+        /// <returns><Returned value./returns>
+        /// <response code ="200">Company exists</response>
+        /// <response code ="201">Company was created</response>
         [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<ActionResult> PostCompany([FromBody] CreateCompanyRequestDto request)
+        public async Task<ActionResult> CreateOrGetCompany([FromBody] CreateCompanyRequestDto request)
         {
-            var company = request.ToCompany();
+            var company = _context.Company.Find(request.Id);
+            if (company != null)
+            {
+                return new OkObjectResult(company.ToCreateCompanyResponseDto());
+            }
+
+            company = request.ToCompany();
 
             company.Notifications = new List<Notification>();
             var rule = _schedulingConfiguration.Rules.Where(x =>
