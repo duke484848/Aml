@@ -1,7 +1,7 @@
 ﻿namespace Aml
 {
     using Aml.Data;
-    using Aml.Models.Api.ScheduleController;
+    using Aml.Models.Api.CompanyController;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;

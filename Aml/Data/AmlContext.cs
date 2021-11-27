@@ -1,5 +1,6 @@
 ﻿namespace Aml.Data
 {
+    using Aml.Models.Api.CompanyController;
     using Microsoft.EntityFrameworkCore;
 
     public class AmlContext : DbContext
@@ -9,6 +10,6 @@
         {
         }
 
-        public DbSet<Aml.Models.Api.Company> Company { get; set; }
+        public DbSet<Company> Company { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Aml.Models.Api.CompanyController;
+    using Aml.Models.Api.CompanyController.Dto;
 
     public static class CompanyMappers
     {

@@ -1,4 +1,4 @@
-﻿namespace Aml.Models.Api
+﻿namespace Aml.Models.Api.CompanyController
 {
     using System;
 

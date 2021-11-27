@@ -6,10 +6,9 @@
     using System.Net;
     using System.Threading.Tasks;
     using Aml.Data;
-    using Aml.Models.Api;
     using Aml.Models.Api.CompanyController;
+    using Aml.Models.Api.CompanyController.Dto;
     using Aml.Models.Api.Mappers;
-    using Aml.Models.Api.ScheduleController;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
@@ -24,14 +23,6 @@
         {
             _context = context;
             _schedulingConfiguration = schedulingConfiguration;
-        }
-
-        [HttpGet]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<ActionResult<IEnumerable<Company>>> GetCompany()
-        {
-            return await _context.Company.ToListAsync();
         }
 
         [HttpPost]

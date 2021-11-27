@@ -1,4 +1,4 @@
-﻿namespace Aml.Models.Api.ScheduleController
+﻿namespace Aml.Models.Api.CompanyController
 {
     using System.Collections.Generic;
 
