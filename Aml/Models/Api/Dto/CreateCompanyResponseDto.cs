@@ -3,10 +3,10 @@
     using System;
     using System.Collections.Generic;
 
-    public class CreateScheduleResponseDto
+    public class CreateCompanyResponseDto
     {
         public Guid CompanyId { get; set; }
 
-        public IEnumerable<Notification> Notifications { get; set; }
+        public IEnumerable<string> Notifications { get; set; }
     }
 }

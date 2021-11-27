@@ -7,6 +7,9 @@
     using System.Threading.Tasks;
     using Aml.Data;
     using Aml.Models.Api;
+    using Aml.Models.Api.CompanyController;
+    using Aml.Models.Api.Mappers;
+    using Aml.Models.Api.ScheduleController;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +18,12 @@
     public class CompanyController : ControllerBase
     {
         private readonly AmlContext _context;
+        private readonly ISchedulingConfiguration _schedulingConfiguration;
 
-        public CompanyController(AmlContext context)
+        public CompanyController(AmlContext context, ISchedulingConfiguration schedulingConfiguration)
         {
             _context = context;
+            _schedulingConfiguration = schedulingConfiguration;
         }
 
         [HttpGet]
@@ -29,84 +34,38 @@
             return await _context.Company.ToListAsync();
         }
 
-        // GET: api/Company/5
-        [HttpGet("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<ActionResult<Company>> GetCompany(Guid id)
-        {
-            var company = await _context.Company.FindAsync(id);
-
-            if (company == null)
-            {
-                return NotFound();
-            }
-
-            return company;
-        }
-
-        [HttpPut("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> PutCompany(Guid id, Company company)
-        {
-            if (id != company.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(company).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CompanyExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<ActionResult<Company>> PostCompany(Company company)
+        public async Task<ActionResult> PostCompany([FromBody] CreateCompanyRequestDto request)
         {
+            var company = request.ToCompany();
+
+            company.Notifications = new List<Notification>();
+            var rule = _schedulingConfiguration.Rules.Where(x =>
+                x.Market == request.Market &&
+                x.CompanyTypes.Contains(request.CompanyType))
+            .FirstOrDefault();
+
+            if (rule is not null)
+            {
+                for (int i = 0, dateOffset = 1; i < rule.NumberOfRepetitions; i++, dateOffset += rule.Interval)
+                {
+                    if (i == 1)
+                    {
+                        dateOffset--;
+                    }
+
+                    company.Notifications.Add(new Notification { Id = Guid.NewGuid(), Date = DateTime.Now.AddDays(dateOffset) });
+                }
+            }
+
             _context.Company.Add(company);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCompany", new { id = company.Id }, company);
-        }
-
-        [HttpDelete("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> DeleteCompany(Guid id)
-        {
-            var company = await _context.Company.FindAsync(id);
-            if (company == null)
+            return new ObjectResult(company.ToCreateCompanyResponseDto())
             {
-                return NotFound();
-            }
-
-            _context.Company.Remove(company);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CompanyExists(Guid id)
-        {
-            return _context.Company.Any(e => e.Id == id);
+                StatusCode = (int)HttpStatusCode.Created
+            };
         }
     }
 }

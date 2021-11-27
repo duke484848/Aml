@@ -2,9 +2,8 @@
 {
     using System.Collections.Generic;
 
-    public interface ISchedulingConfiguration
+    public class SchedulingConfiguration : ISchedulingConfiguration
     {
         public IEnumerable<SchedulingRule> Rules { get; set; }
     }
-
 }

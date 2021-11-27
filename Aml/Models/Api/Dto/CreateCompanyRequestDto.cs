@@ -1,10 +1,9 @@
-﻿namespace Aml.Models.Api
+﻿namespace Aml.Models.Api.CompanyController
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public class Company
+    public class CreateCompanyRequestDto
     {
         public Guid Id { get; set; }
 
@@ -22,7 +21,5 @@
         [Required]
         [EnumDataType(typeof(Market))]
         public Market Market { get; set; }
-
-        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

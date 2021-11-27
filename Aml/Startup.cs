@@ -1,7 +1,6 @@
 ﻿namespace Aml
 {
     using Aml.Data;
-    using Aml.Models.Api;
     using Aml.Models.Api.ScheduleController;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -10,8 +9,6 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class Startup
     {
