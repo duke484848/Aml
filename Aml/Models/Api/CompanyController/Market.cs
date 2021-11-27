@@ -2,9 +2,9 @@
 {
     public enum Market
     {
-        Denmark,
-        Norway,
-        Sweden,
-        Finland,
+        Denmark = 1,
+        Norway = 2,
+        Sweden = 4,
+        Finland = 8,
     }
 }

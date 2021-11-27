@@ -5,16 +5,16 @@
         /// <summary>
         /// Small company.
         /// </summary>
-        Small,
+        Small = 1,
 
         /// <summary>
         /// Medium company.
         /// </summary>
-        Medium,
+        Medium = 2,
 
         /// <summary>
         /// Large company.
         /// </summary>
-        Large,
+        Large = 4,
     }
 }

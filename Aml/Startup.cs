@@ -3,6 +3,7 @@
     using System.Text.Json.Serialization;
     using Aml.Data;
     using Aml.Models.Api.CompanyController;
+    using Aml.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,11 @@
             var schedulingConfiguration = new SchedulingConfiguration();
             Configuration.GetSection("SchedulingConfiguration").Bind(schedulingConfiguration);
             services.AddSingleton<ISchedulingConfiguration>(schedulingConfiguration);
+            services.AddSingleton<ISchedulingService, SchedulingService>();
 
             services.AddDbContext<AmlContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("AmlContext")));
+                    options.UseLazyLoadingProxies()
+                    .UseSqlServer(Configuration.GetConnectionString("AmlContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

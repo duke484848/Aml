@@ -11,5 +11,7 @@
         }
 
         public DbSet<Company> Company { get; set; }
+
+        public DbSet<Notification> Notification { get; set; }
     }
 }

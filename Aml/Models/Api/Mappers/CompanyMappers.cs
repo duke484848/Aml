@@ -25,6 +25,5 @@
             CompanyId = company.Id,
             Notifications = company?.Notifications.Select(x => x.Date.ToShortDateString()).ToList() ?? new List<string>()
         };
-
     }
 }

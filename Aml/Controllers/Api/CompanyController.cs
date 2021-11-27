@@ -9,31 +9,31 @@
     using Aml.Models.Api.CompanyController;
     using Aml.Models.Api.CompanyController.Dto;
     using Aml.Models.Api.Mappers;
+    using Aml.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [Route("api/[controller]")]
     [ApiController]
     public class CompanyController : ControllerBase
     {
         private readonly AmlContext _context;
-        private readonly ISchedulingConfiguration _schedulingConfiguration;
+        private readonly ISchedulingService _schedulingService;
 
-        public CompanyController(AmlContext context, ISchedulingConfiguration schedulingConfiguration)
+
+        public CompanyController(AmlContext context, ISchedulingService schedulingService)
         {
             _context = context;
-            _schedulingConfiguration = schedulingConfiguration;
+            _schedulingService = schedulingService;
         }
 
         /// <summary>
-        /// Creates or return company with its schedule
+        /// Creates or return company with its schedule.
         /// </summary>
-        /// <returns><Returned value./returns>
-        /// <response code ="200">Company exists</response>
-        /// <response code ="201">Company was created</response>
         [HttpPost]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Company exists, returning with no changes.")]
+        [SwaggerResponse((int)HttpStatusCode.Created, "Company was created.")]
         public async Task<ActionResult> CreateOrGetCompany([FromBody] CreateCompanyRequestDto request)
         {
             var company = _context.Company.Find(request.Id);
@@ -44,24 +44,7 @@
 
             company = request.ToCompany();
 
-            company.Notifications = new List<Notification>();
-            var rule = _schedulingConfiguration.Rules.Where(x =>
-                x.Market == request.Market &&
-                x.CompanyTypes.Contains(request.CompanyType))
-            .FirstOrDefault();
-
-            if (rule is not null)
-            {
-                for (int i = 0, dateOffset = 1; i < rule.NumberOfRepetitions; i++, dateOffset += rule.Interval)
-                {
-                    if (i == 1)
-                    {
-                        dateOffset--;
-                    }
-
-                    company.Notifications.Add(new Notification { Id = Guid.NewGuid(), Date = DateTime.Now.AddDays(dateOffset) });
-                }
-            }
+            company.Notifications = _schedulingService.GenerateNotificationSchedule(company);
 
             _context.Company.Add(company);
             await _context.SaveChangesAsync();
