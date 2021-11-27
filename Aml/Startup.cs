@@ -1,5 +1,8 @@
 ﻿namespace Aml
 {
+    using System;
+    using System.IO;
+    using System.Reflection;
     using System.Text.Json.Serialization;
     using Aml.Data;
     using Aml.Models.Api.CompanyController;
@@ -28,6 +31,9 @@
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Aml", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.AddControllers().AddJsonOptions(opt =>

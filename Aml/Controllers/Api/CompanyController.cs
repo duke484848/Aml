@@ -25,9 +25,11 @@
         /// <summary>
         /// Creates or return company with its schedule.
         /// </summary>
+        /// <response code="200">Company exists, returning with no changes.</response>
+        /// <response code="201">Company was created.</response>
         [HttpPost]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Company exists, returning with no changes.")]
-        [SwaggerResponse((int)HttpStatusCode.Created, "Company was created.")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<ActionResult> CreateOrGetCompany([FromBody] CreateCompanyRequestDto request)
         {
             var company = _context.Company.Find(request.Id);
