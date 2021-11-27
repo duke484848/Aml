@@ -1,5 +1,5 @@
 Example request bodies:
-
+```
 {
   "id": "90c9c522-53f6-4c56-9594-bb1017b43e5d",
   "name": "string",
@@ -15,3 +15,4 @@ Example request bodies:
   "companyType": "Medium",
   "market": "Finland"
 }
+```
