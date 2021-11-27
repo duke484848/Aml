@@ -11,7 +11,7 @@
     public class SchedulingServiceTests
     {
         [Fact]
-        public void ToCreateCompanyResponseDto_creates_correct_response_from_company_object()
+        public void When_rule_is_found_It_generates_non_empty_notification_sequence()
         {
             // Arrange
             var company = new Company()
@@ -56,5 +56,27 @@
             Assert.True(expected.Count == 0);
         }
 
+        [Fact]
+        public void When_rule_is_not_found_It_generates_empty_notification_sequence()
+        {
+            // Arrange
+            var company = new Company()
+            {
+                Id = Guid.NewGuid(),
+                CompanyNumber = "1234567890",
+                CompanyType = CompanyType.Large,
+                Market = Market.Denmark,
+                Name = "Abc",
+            };
+            var schedulingConfigurationMock = new Mock<ISchedulingConfiguration>();
+            schedulingConfigurationMock.Setup(x => x.Rules).Returns(new List<SchedulingRule>());
+            var sut = new SchedulingService(schedulingConfigurationMock.Object);
+
+            // Act
+            var actual = sut.GenerateNotificationSchedule(company);
+
+            //Assert
+            Assert.True(actual.Count == 0);
+        }
     }
 }
