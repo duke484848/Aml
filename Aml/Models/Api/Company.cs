@@ -13,7 +13,7 @@
 
         [Required]
         [RegularExpression("^\\d{10}$")]
-        public string CompanyNumbers { get; set; }
+        public string CompanyNumber { get; set; }
 
         [Required]
         [EnumDataType(typeof(CompanyType))]
