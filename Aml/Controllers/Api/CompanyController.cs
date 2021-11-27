@@ -1,17 +1,12 @@
 ﻿namespace Aml.Controllers.Api
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Aml.Data;
-    using Aml.Models.Api.CompanyController;
     using Aml.Models.Api.CompanyController.Dto;
     using Aml.Models.Api.Mappers;
     using Aml.Services;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
     using Swashbuckle.AspNetCore.Annotations;
 
     [Route("api/[controller]")]
@@ -20,7 +15,6 @@
     {
         private readonly AmlContext _context;
         private readonly ISchedulingService _schedulingService;
-
 
         public CompanyController(AmlContext context, ISchedulingService schedulingService)
         {

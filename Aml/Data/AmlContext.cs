@@ -5,6 +5,11 @@
 
     public class AmlContext : DbContext
     {
+        public AmlContext()
+          : base()
+        {
+        }
+
         public AmlContext(DbContextOptions<AmlContext> options)
             : base(options)
         {

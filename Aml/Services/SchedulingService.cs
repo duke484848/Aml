@@ -7,7 +7,6 @@
 
     public class SchedulingService : ISchedulingService
     {
-
         private readonly ISchedulingConfiguration _schedulingConfiguration;
 
         public SchedulingService(ISchedulingConfiguration schedulingConfiguration)
@@ -37,6 +36,5 @@
 
             return notifications;
         }
-
     }
 }
